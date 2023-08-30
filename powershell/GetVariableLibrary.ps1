@@ -6,7 +6,7 @@ param(
     [string]$outputFile = "test.csv"
 )
 
-# Base URL for Azure DevOps REST API
+# Base URL for Azure DevOps REST APIls
 $baseUrl = "https://dev.azure.com/$organization/$project/_apis"
 $baseUrl
 
