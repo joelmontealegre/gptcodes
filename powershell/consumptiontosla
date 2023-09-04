@@ -1,0 +1,25 @@
+Migration Testing Approach: Consumption to Standard Logic App
+
+Migration from a Consumption Logic App to a Standard Logic App is a critical process that aims to maintain the existing functionality while adapting to a different architecture. To streamline the testing activities and ensure a smooth transition, we have defined a targeted testing approach focusing on key aspects. This approach is designed to minimize unnecessary testing activities while ensuring the integrity of the migration process.
+
+1. Flow Verification:
+During the migration process, the primary goal is to maintain the existing logic without introducing changes to the business logic. To ensure this, we will follow these steps:
+
+Capture Screenshots: A screenshot of the Consumption Logic App's workflow will be taken to document the existing flow accurately.
+Equivalent Workflow: The Standard Logic App will be configured to replicate the exact flow captured in the screenshot of the Consumption Logic App.
+Comparison: A side-by-side comparison between the captured screenshot and the configured Standard Logic App will be performed to ensure that the flow remains consistent.
+2. Connection Testing:
+Connections are crucial for both Consumption and Standard Logic Apps. It's essential to ensure that the Standard Logic App can seamlessly access the necessary resources and servers. Here's how we will approach connection testing:
+
+Connection Replication: The connections used in the Consumption Logic App will be configured in the Standard Logic App, ensuring the same access permissions.
+Testing Resources: Key resources and servers that were accessed by the Consumption Logic App will be tested to confirm that the Standard Logic App can successfully connect to them.
+3. Maps and Schema Verification:
+Maps and schema used in the Consumption Logic App need to be validated for compatibility in the Standard Logic App:
+
+Transferring Maps and Schema: Any maps or schema utilized in the Consumption Logic App will be replicated in the Standard Logic App to maintain data transformation integrity.
+Validation: The data transformation output of the Standard Logic App will be compared against the expected output derived from the Consumption Logic App.
+4. Changes to Connections/Actions/Triggers:
+During migration, changes might occur in connections, actions, or triggers. These changes need to be managed effectively:
+
+Documenting Changes: Any modifications made to connections, actions, or triggers during the migration will be documented.
+Testing Modifications: Each modified connection, action, or trigger will be tested to ensure its functionality aligns with the intended behavior.
