@@ -1,0 +1,65 @@
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+
+namespace KuduFileDownloader
+{
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            string webAppName = "your-webapp-name";
+            string folderPath = "site/wwwroot"; // Replace with your folder path
+            string basicAuthHeaderValue = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes("deploymentUsername:deploymentPassword")); // Replace with your deployment credentials
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuthHeaderValue);
+
+                string apiUrl = $"https://{webAppName}.scm.azurewebsites.net/api/vfs/{folderPath}";
+
+                HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    string[] files = responseBody.Trim('[', ']').Split(',');
+
+                    foreach (string file in files)
+                    {
+                        string fileName = file.Trim('"');
+                        await DownloadFile(client, webAppName, folderPath, fileName);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                }
+            }
+        }
+
+        static async Task DownloadFile(HttpClient client, string webAppName, string folderPath, string fileName)
+        {
+            string apiUrl = $"https://{webAppName}.scm.azurewebsites.net/api/vfs/{folderPath}/{fileName}";
+
+            HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                byte[] fileBytes = await response.Content.ReadAsByteArrayAsync();
+                string savePath = Path.Combine("DownloadedFiles", fileName); // Save files in a directory named "DownloadedFiles"
+
+                Directory.CreateDirectory("DownloadedFiles"); // Create the directory if it doesn't exist
+
+                File.WriteAllBytes(savePath, fileBytes);
+                Console.WriteLine($"Downloaded: {fileName}");
+            }
+            else
+            {
+                Console.WriteLine($"Error downloading {fileName}: {response.StatusCode}");
+            }
+        }
+    }
+}
