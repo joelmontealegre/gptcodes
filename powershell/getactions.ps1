@@ -1,21 +1,28 @@
 param (
-    [string]$jsonFilePath
+    [Parameter(Mandatory = $true)]
+    [string]$JsonFilePath
 )
 
-# Function to list keys under "actions" node and its nested "actions" nodes
-function ListActionKeys($node, $path) {
-    foreach ($property in $node.PSObject.Properties) {
+# Read the JSON data from the specified file
+$jsonData = Get-Content -Path $JsonFilePath | Out-String
+
+# Parse the JSON data
+$jsonObject = $jsonData | ConvertFrom-Json
+
+# Function to recursively extract keys from objects
+function Get-Keys($obj) {
+    foreach ($property in $obj.PSObject.Properties) {
         if ($property.Name -eq "actions") {
-            foreach ($actionKey in $property.Value.PSObject.Properties.Name) {
-                Write-Host "Key under '$path/actions': $actionKey"
-                ListActionKeys $property.Value.$actionKey "$path/actions/$actionKey"
-            }
+            $property.Value.PSObject.Properties.Name
+        }
+        elseif ($property.Value -is [System.Management.Automation.PSCustomObject]) {
+            Get-Keys $property.Value
         }
     }
 }
 
-# Read JSON data from the file
-$jsonData = Get-Content -Path $jsonFilePath | Out-String | ConvertFrom-Json
+# Call the function to extract keys under "actions"
+$keysUnderActions = Get-Keys $jsonObject
 
-# Call the function to list keys under "actions" nodes
-ListActionKeys $jsonData "root"
+# Output the keys
+$keysUnderActions
